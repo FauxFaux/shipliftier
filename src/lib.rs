@@ -85,13 +85,11 @@ pub fn go() -> Result<(), Error> {
     render_order.sort_by_key(|(k, _)| k.to_string());
 
     for (name, fields) in render_order {
-        use heck::MixedCase;
-
         println!("struct {} {{", name);
         for field in fields {
             println!(
                 "    {}: {},",
-                field.name.to_mixed_case(),
+                name_field(&field.name),
                 render::render(&name_type(field.data_type.clone(), &name_lookup))
             );
         }
@@ -136,6 +134,14 @@ fn name_type(t: FullType, names: &HashMap<Vec<Field<FullType>>, String>) -> Name
         FullType::Simple(simple) => NamedType::Simple(simple),
         FullType::Unknown => NamedType::Unknown,
     }
+}
+
+fn name_field(name: &str) -> String {
+    use heck::MixedCase;
+    match name.to_mixed_case().as_ref() {
+        "type" => "type_",
+        other => other,
+    }.to_string()
 }
 
 fn first_not_in<'s>(
