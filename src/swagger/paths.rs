@@ -45,7 +45,8 @@ fn process_methods(path: &Hash) -> Result<HashMap<HttpMethod, Operation<PartialT
             process_method(
                 op.as_hash()
                     .ok_or_else(|| format_err!("non-hash op body: {:?}", op))?,
-            ).with_context(|_| format_err!("processing {:?}", http_method))?,
+            )
+            .with_context(|_| format_err!("processing {:?}", http_method))?,
         );
     }
 
@@ -155,6 +156,10 @@ fn process_param(param: &Hash) -> Result<Param<PartialType>, Error> {
         let mut schema_keys = keys(schema)?;
         schema_keys.remove("example");
 
+        // TODO: could these be useful?
+        schema_keys.remove("title");
+        schema_keys.remove("description");
+
         let field_result = definitions::field_type(schema, &mut schema_keys);
 
         ensure!(
@@ -166,7 +171,8 @@ fn process_param(param: &Hash) -> Result<Param<PartialType>, Error> {
         field_result
     } else {
         definitions::field_type(param, &mut current_keys)
-    }.with_context(|_| format_err!("finding type of {:?}", name))?;
+    }
+    .with_context(|_| format_err!("finding type of {:?}", name))?;
 
     ensure!(
         current_keys.is_empty(),

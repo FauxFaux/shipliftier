@@ -34,7 +34,8 @@ pub fn go() -> Result<(), Error> {
         doc["paths"]
             .as_hash()
             .ok_or_else(|| format_err!("no paths"))?,
-    ).with_context(|_| format_err!("processing definitions"))?;
+    )
+    .with_context(|_| format_err!("processing definitions"))?;
 
     let endpoints = endpoints
         .into_iter()

@@ -201,7 +201,8 @@ impl<T> Endpoint<T> {
                             id: None,
                             place: StructContextPlace::Unknown,
                         },
-                    ).map(|op| (method, op))
+                    )
+                    .map(|op| (method, op))
                 })
                 .collect::<Result<HashMap<HttpMethod, Operation<R>>, Error>>()?,
         })

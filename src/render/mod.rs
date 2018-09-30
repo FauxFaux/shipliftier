@@ -1,13 +1,13 @@
+use cast::i64;
 use failure::Error;
 use failure::ResultExt;
-use cast::i64;
 
 use swagger::ArrayConstraints;
 use swagger::DataType;
 use swagger::Field;
 use swagger::FullType;
-use swagger::NamedType;
 use swagger::IntegerFormat;
+use swagger::NamedType;
 
 pub fn render(t: &NamedType) -> String {
     match t {
@@ -23,8 +23,10 @@ fn render_simple(simple: &DataType) -> String {
     use self::IntegerFormat::*;
 
     match simple {
-        String {..} => "String".to_string(),
-        Integer { min, max, format, .. } => {
+        String { .. } => "String".to_string(),
+        Integer {
+            min, max, format, ..
+        } => {
             let unsigned = min.unwrap_or(-1) >= 0 || match format {
                 U8 | U16 | U32 | U64 => true,
                 _ => false,
@@ -51,8 +53,12 @@ fn render_simple(simple: &DataType) -> String {
                 0
             };
 
-            format!("{}{}", if unsigned { "u" } else { "i" }, format_bits.max(max_bits))
-        },
+            format!(
+                "{}{}",
+                if unsigned { "u" } else { "i" },
+                format_bits.max(max_bits)
+            )
+        }
 
         other => format!("(/* unsupported type: {:?} */)", other),
     }
